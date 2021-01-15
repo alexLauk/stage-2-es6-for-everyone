@@ -16,5 +16,6 @@ export function getHitPower(fighter) {
 }
 
 export function getBlockPower(fighter) {
-  // return block power
+  const dodgeChance = Math.floor(Math.random() * 2) + 1;
+  return fighter.defense * dodgeChance;
 }
