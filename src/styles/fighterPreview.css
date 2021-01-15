@@ -11,3 +11,23 @@
 .fighter-preview___left {
   align-items: flex-start;
 }
+
+.fighter-preview___card {
+  height: 150px;
+  width: 270px;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  background: #ffdfa7;
+  margin: 10px;
+  border: 5px solid #ca9650;
+}
+
+.fighter-info {
+  width: 120px;
+}
+
+.fighter-preview___img{
+  margin-left: 10px;
+}
