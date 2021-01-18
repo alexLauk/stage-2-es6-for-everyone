@@ -2,8 +2,43 @@ import { controls } from '../../constants/controls';
 
 export async function fight(firstFighter, secondFighter) {
   return new Promise((resolve) => {
-    // resolve the promise with the winner when fight is over
+
+
+    runOnKeys(() => console.log('PlayerOneAttack'), controls.PlayerOneAttack);
+
+    runOnKeys(() => console.log('PlayerOneBlock'), controls.PlayerOneBlock);
+
+    runOnKeys(() => console.log('PlayerTwoAttack'), controls.PlayerTwoAttack);
+
+    runOnKeys(() => console.log('PlayerTwoBlock'), controls.PlayerTwoBlock);
+
+    runOnKeys(() => console.log('PlayerOneCriticalHitCombination'), ...controls.PlayerOneCriticalHitCombination);
+
+    runOnKeys(() => console.log('PlayerTwoCriticalHitCombination'), ...controls.PlayerTwoCriticalHitCombination);
+
   });
+}
+
+export function runOnKeys(func, ...codes) {
+  let pressed = new Set();
+
+  document.addEventListener('keydown', (event) => {
+    pressed.add(event.code);
+
+    for (let code of codes) {
+      if (!pressed.has(code)) {
+        return;
+      }
+    }
+    pressed.clear();
+
+    func();
+  });
+
+  document.addEventListener('keyup', (event) => {
+    pressed.delete(event.code);
+  });
+
 }
 
 export function getDamage(attacker, defender) {
