@@ -3,18 +3,33 @@ import { controls } from '../../constants/controls';
 export async function fight(firstFighter, secondFighter) {
   return new Promise((resolve) => {
 
+    const firstFighterHealthBar = document.getElementById('left-fighter-indicator');
+    const secondFighterHealthBar = document.getElementById('right-fighter-indicator');
+    firstFighter.currenthealth = firstFighter.health;
+    secondFighter.currenthealth = secondFighter.health;
 
-    runOnKeys(() => console.log('PlayerOneAttack'), controls.PlayerOneAttack);
+    const hit = (attacker, defender, bar) => {
+
+      defender.currenthealth -= getDamage(attacker, defender);
+      console.log(defender)
+      bar.style.width = defender.currenthealth >= 0 ? `${defender.currenthealth / defender.health * 100}%` : '0%';
+
+      if (defender.currenthealth <= 0) {
+        resolve(attacker);
+      }
+    }
+
+    runOnKeys(() => hit(firstFighter, secondFighter, secondFighterHealthBar), controls.PlayerOneAttack);
 
     runOnKeys(() => console.log('PlayerOneBlock'), controls.PlayerOneBlock);
 
-    runOnKeys(() => console.log('PlayerTwoAttack'), controls.PlayerTwoAttack);
+    runOnKeys(() => hit(secondFighter, firstFighter, firstFighterHealthBar), controls.PlayerTwoAttack);
 
     runOnKeys(() => console.log('PlayerTwoBlock'), controls.PlayerTwoBlock);
 
-    runOnKeys(() => console.log('PlayerOneCriticalHitCombination'), ...controls.PlayerOneCriticalHitCombination);
+    runOnKeys(() => hit(firstFighter, secondFighter, secondFighterHealthBar), ...controls.PlayerOneCriticalHitCombination);
 
-    runOnKeys(() => console.log('PlayerTwoCriticalHitCombination'), ...controls.PlayerTwoCriticalHitCombination);
+    runOnKeys(() => hit(secondFighter, firstFighter, firstFighterHealthBar), ...controls.PlayerTwoCriticalHitCombination);
 
   });
 }
@@ -22,14 +37,23 @@ export async function fight(firstFighter, secondFighter) {
 export function runOnKeys(func, ...codes) {
   let pressed = new Set();
 
-  document.addEventListener('keydown', (event) => {
-    pressed.add(event.code);
+  document.addEventListener('keydown', (e) => {
+    for (let code of pressed) {
+      if(code === controls.PlayerOneBlock && e.code === controls.PlayerOneAttack){
+        return;
+      } else if(code === controls.PlayerTwoBlock && e.code === controls.PlayerTwoAttack){
+        return;
+      }
+    }
+
+    pressed.add(e.code);
 
     for (let code of codes) {
       if (!pressed.has(code)) {
         return;
       }
     }
+
     pressed.clear();
 
     func();
